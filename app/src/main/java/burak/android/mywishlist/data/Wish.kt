@@ -11,6 +11,7 @@ data class Wish(
     @ColumnInfo(name = "wish-title")
     val title: String = "",
     @ColumnInfo(name = "wish-desc")
-    val description: String = ""
+    val description: String = "",
+    @ColumnInfo(name = "is_archived")
+    val isArchived: Boolean = false
 )
-

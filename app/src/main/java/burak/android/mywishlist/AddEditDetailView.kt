@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -53,8 +52,8 @@ fun AddEditDetailView(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState)},
-        topBar = {AppBarView(title = if(id != 0L) "Update Wish" else "Add Wish" )
-        {navController.navigateUp()} //Goes back the screen where we came from.[To HomeView]
+        topBar = {AppBarView(title = if(id != 0L) "Update Wish" else "Add Wish" , navController)
+        {navController.navigateUp()}
         },
         containerColor = colorResource(id = R.color.background_color)
     ) {
@@ -108,10 +107,6 @@ fun AddEditDetailView(
                     style = TextStyle(fontSize = 18.sp)
                 )
             }
-
-
-
-
         }
     }
 }
@@ -126,26 +121,17 @@ fun WishTextField(
         value = value, onValueChange = onValueChanged,
         label = {Text(text = label, color = Color.Black)},
         modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text), //There are another keyboard options, just to learn
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         colors = TextFieldDefaults.colors(
-            focusedTextColor = Color.Black, // Kullanıcı yazı yazarken siyah renk
-            unfocusedTextColor = Color.Black, // Alan seçili değilken de siyah renk
-            focusedContainerColor = Color.Transparent, // Arka plan rengi (şeffaf)
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
+            focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             disabledContainerColor = Color.Transparent,
-            cursorColor = Color.Black, // İmleç rengi siyah
-            focusedIndicatorColor = Color.Black, // Çerçeve rengi (seçili)
-            unfocusedIndicatorColor = Color.Gray, // Çerçeve rengi (seçili değil)
+            cursorColor = Color.Black,
+            focusedIndicatorColor = Color.Black,
+            unfocusedIndicatorColor = Color.Gray,
             disabledIndicatorColor = Color.Gray
         )
         )
-
-
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WishTextFieldPrev(){
-    WishTextField(label = "text", value = "text",  {})
 }

@@ -13,41 +13,47 @@ import kotlinx.coroutines.launch
 
 class WishViewModel(private val wishRepository: WishRepository = Graph.wishRepository): ViewModel() {
 
+
+
     var wishTitleState by mutableStateOf("")
     var wishDescriptionState by mutableStateOf("")
 
-    fun onWishTitleChanged(newString: String){
+    fun onWishTitleChanged(newString: String) {
         wishTitleState = newString
     }
 
-    fun OnWishDescriptionChanged(newString: String){
+    fun OnWishDescriptionChanged(newString: String) {
         wishDescriptionState = newString
     }
 
-    lateinit var getAllWishes: Flow<List<Wish>>
+    val getActiveWishes: Flow<List<Wish>> = wishRepository.getActiveWishes()
+    val getArchivedWishes: Flow<List<Wish>> = wishRepository.getArchivedWishes()
 
-    init {
-        viewModelScope.launch {
-            getAllWishes = wishRepository.getWishes()
-        }
-    }
-    fun addWish(wish: Wish){
+    fun addWish(wish: Wish) {
         viewModelScope.launch(Dispatchers.IO) {
-            wishRepository.addAWish(wish = wish)
+            wishRepository.addAWish(wish)
         }
     }
-    fun getAWishById(id:Long): Flow<Wish>{
+
+    fun getAWishById(id: Long): Flow<Wish> {
         return wishRepository.getAWishById(id)
     }
-    fun updateWish(wish: Wish){
+
+    fun updateWish(wish: Wish) {
         viewModelScope.launch(Dispatchers.IO) {
-            wishRepository.updateAWish(wish = wish)
-        }
-    }
-    fun deleteWish(wish: Wish){
-        viewModelScope.launch(Dispatchers.IO) {
-            wishRepository.deleteAWish(wish = wish)
+            wishRepository.updateAWish(wish)
         }
     }
 
+    fun deleteWish(wish: Wish) {
+        viewModelScope.launch(Dispatchers.IO) {
+            wishRepository.deleteAWish(wish)
+        }
+    }
+
+    fun archiveWish(wishId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            wishRepository.archiveWish(wishId)
+        }
+    }
 }

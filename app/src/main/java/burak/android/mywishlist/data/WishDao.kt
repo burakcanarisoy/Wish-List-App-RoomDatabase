@@ -14,9 +14,11 @@ abstract class WishDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract suspend fun addAWish(wishEntity: Wish)
 
-    //Loads all wishes from the wish table
-    @Query("Select * from `wish-table`")
-    abstract fun getAllWishes(): Flow<List<Wish>> //It will return the list of wishes
+    @Query("SELECT * FROM `wish-table` WHERE is_archived = 0")
+    abstract fun getActiveWishes(): Flow<List<Wish>> // Non-archived wishes
+
+    @Query("SELECT * FROM `wish-table` WHERE is_archived = 1")
+    abstract fun getArchivedWishes(): Flow<List<Wish>> // Archived wishes
 
     @Update
     abstract suspend fun updateAWish(wishEntity: Wish)
@@ -24,6 +26,10 @@ abstract class WishDao {
     @Delete
     abstract suspend fun deleteAWish(wishEntity: Wish)
 
+    @Query("UPDATE `wish-table` SET is_archived = 1 WHERE id = :wishId")
+    abstract suspend fun archiveWish(wishId: Long) // Archive the determined ID
+
     @Query("Select * from `wish-table` where id=:id")
     abstract fun getAWishById(id: Long): Flow<Wish>
+
 }

@@ -27,7 +27,6 @@ fun Navigation(viewModel: WishViewModel = viewModel(), navController: NavHostCon
             val id = if(entry.arguments != null) entry.arguments!!.getLong("id") else 0L
             AddEditDetailView(id = id, viewModel = viewModel, navController = navController)
         }
-
-
+        composable(route = "archived_screen"){ ArchivedScreen(navController, viewModel = viewModel) }
     }
 }
