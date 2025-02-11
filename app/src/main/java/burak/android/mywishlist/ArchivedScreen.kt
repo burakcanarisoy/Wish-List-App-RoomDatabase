@@ -19,6 +19,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -50,8 +51,9 @@ fun ArchivedScreen(navController: NavController, viewModel: WishViewModel){
     var showDialog by remember { mutableStateOf(false) }
     var wishToDelete by remember { mutableStateOf<Wish?>(null) }
     val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
     Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = {AppBarView(title = "Archived Wishes", navController)
         {navController.navigateUp()}},
         containerColor = colorResource(id = R.color.background_color),
@@ -68,7 +70,7 @@ fun ArchivedScreen(navController: NavController, viewModel: WishViewModel){
                         if(it == SwipeToDismissBoxValue.StartToEnd){
                             viewModel.unarchiveWish(wish.id)
                             scope.launch {
-                                snackbarHostState.showSnackbar("Wish has been unarchived")
+                                snackBarHostState.showSnackbar("Wish has been unarchived")
                             }
                         }else if(it == SwipeToDismissBoxValue.EndToStart){
                             wishToDelete = wish
