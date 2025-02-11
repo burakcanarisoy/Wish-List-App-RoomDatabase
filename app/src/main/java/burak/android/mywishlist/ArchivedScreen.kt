@@ -12,12 +12,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -29,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.colorResource
@@ -38,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import burak.android.mywishlist.data.Wish
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -45,6 +49,8 @@ import burak.android.mywishlist.data.Wish
 fun ArchivedScreen(navController: NavController, viewModel: WishViewModel){
     var showDialog by remember { mutableStateOf(false) }
     var wishToDelete by remember { mutableStateOf<Wish?>(null) }
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         topBar = {AppBarView(title = "Archived Wishes", navController)
         {navController.navigateUp()}},
@@ -59,7 +65,12 @@ fun ArchivedScreen(navController: NavController, viewModel: WishViewModel){
                     wish ->
                 val dismissState = rememberSwipeToDismissBoxState(
                     confirmValueChange = {
-                        if (it == SwipeToDismissBoxValue.EndToStart){
+                        if(it == SwipeToDismissBoxValue.StartToEnd){
+                            viewModel.unarchiveWish(wish.id)
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Wish has been unarchived")
+                            }
+                        }else if(it == SwipeToDismissBoxValue.EndToStart){
                             wishToDelete = wish
                             showDialog = true
                         }
@@ -71,19 +82,28 @@ fun ArchivedScreen(navController: NavController, viewModel: WishViewModel){
                     state = dismissState,
                     backgroundContent = {
                         val color by animateColorAsState(
-                            if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) Color.Red else Color.Transparent
+                            when(dismissState.dismissDirection){
+                                SwipeToDismissBoxValue.EndToStart -> Color.Red
+                                SwipeToDismissBoxValue.StartToEnd -> Color.Green
+                                else -> Color.Transparent
+                            }
                         )
-                        val alignment = Alignment.CenterEnd
+                        val alignment = if(dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd)
+                            Alignment.CenterStart else Alignment.CenterEnd
                         Box(
                             Modifier
                                 .fillMaxSize()
                                 .background(color)
                                 .padding(horizontal = 20.dp), contentAlignment = alignment
                         ){
-                            Icon(Icons.Default.Delete, contentDescription = "Delete Icon", tint = Color.White)
+                            Icon(
+                                imageVector = if (dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) Icons.Default.Refresh else Icons.Default.Delete,
+                                contentDescription = "Unarchive or Delete Icon",
+                                tint = Color.White
+                            )
                         }
                     },
-                    enableDismissFromStartToEnd = false,
+                    enableDismissFromStartToEnd = true,
                     enableDismissFromEndToStart = true
                 ) {
                     ArchivedItem(wish= wish)
@@ -101,7 +121,7 @@ fun ArchivedScreen(navController: NavController, viewModel: WishViewModel){
     if (showDialog){
         AlertDialog(
             onDismissRequest = {showDialog = false},
-            title = { Text(text = "Deletion") },
+            title = { Text(text = "Delete") },
             text = { Text(text = "Are you sure you want to delete this wish?") },
             confirmButton = {
                 TextButton(onClick = {

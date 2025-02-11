@@ -26,4 +26,8 @@ class WishRepository(private val wishDao: WishDao) {
     suspend fun archiveWish(wishId: Long){
         wishDao.archiveWish(wishId)
     }
+
+    suspend fun unarchiveWish(wishId: Long){
+        wishDao.unarchiveWish(wishId)
+    }
 }

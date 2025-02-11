@@ -96,7 +96,6 @@ fun AddEditDetailView(
                         }
                     }
 
-
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RectangleShape,

@@ -29,6 +29,9 @@ abstract class WishDao {
     @Query("UPDATE `wish-table` SET is_archived = 1 WHERE id = :wishId")
     abstract suspend fun archiveWish(wishId: Long) // Archive the determined ID
 
+    @Query("UPDATE `wish-table` SET is_archived = 0 WHERE id = :wishId")
+    abstract suspend fun unarchiveWish(wishId: Long) // Unarchive the determined ID
+
     @Query("Select * from `wish-table` where id=:id")
     abstract fun getAWishById(id: Long): Flow<Wish>
 

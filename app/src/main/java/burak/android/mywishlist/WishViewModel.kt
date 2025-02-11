@@ -56,4 +56,10 @@ class WishViewModel(private val wishRepository: WishRepository = Graph.wishRepos
             wishRepository.archiveWish(wishId)
         }
     }
+
+    fun unarchiveWish(wishId: Long){
+        viewModelScope.launch(Dispatchers.IO) {
+            wishRepository.unarchiveWish(wishId)
+        }
+    }
 }
